@@ -1,7 +1,6 @@
-use axum::{http, extract, Json};
-use axum::http::StatusCode;
+use axum::{http, extract};
 use serde::{Deserialize, Serialize};
-use sqlx::PgPool;
+use sqlx::{PgPool};
 
 
 #[derive(Serialize)]
@@ -32,8 +31,6 @@ pub struct CreateQuote {
     quote: String,
 }
 
-
-
 pub async fn health() -> http::StatusCode {
     http::StatusCode::OK
 }
@@ -41,7 +38,7 @@ pub async fn health() -> http::StatusCode {
 pub async fn create_quote(
     extract::State(pool):extract::State<PgPool>,
     axum::Json(payload): axum::Json<CreateQuote>,
-) -> Result<(StatusCode, Json<Quote>), StatusCode> {
+) -> Result<(http::StatusCode, axum::Json<Quote>), http::StatusCode> {
     let quote = Quote::new(payload.book, payload.quote);
 
     let res = sqlx::query(
